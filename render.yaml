@@ -1,0 +1,13 @@
+services:
+  - type: web
+    name: cadastro-alunos
+    env: node
+    region: oregon
+    buildCommand: |
+      npm install
+      npm rebuild sqlite3 --build-from-source
+    startCommand: node server.js
+    plan: free
+    envVars:
+      - key: NODE_VERSION
+        value: 22.0.0
