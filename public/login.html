@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Login - Sistema de Presenças</title>
+
+    <!-- Importa o mesmo estilo do dashboard -->
+    <link rel="stylesheet" href="style.css">
+
+    <style>
+        body {
+            background: linear-gradient(135deg, #1f1f1f, #3a3a3a);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            font-family: Arial, sans-serif;
+            color: #fff;
+        }
+
+        .login-container {
+            background: #003d99;
+            padding: 40px 50px;
+            border-radius: 15px;
+            box-shadow: 0 5px 25px rgba(0, 0, 0, 0.3);
+            text-align: center;
+            backdrop-filter: blur(8px);
+            width: 320px;
+            transition: 0.3s ease-in-out;
+        }
+
+        .login-container:hover {
+            box-shadow:
+                0 0 15px rgba(0, 170, 255, 0.6),
+                0 0 35px rgba(0, 170, 255, 0.4),
+                0 0 55px rgba(0, 170, 255, 0.3);
+            transform: translateY(-3px);
+        }
+
+        h1 {
+            margin-bottom: 25px;
+            font-size: 1.8em;
+            color: #fff;
+        }
+
+        input {
+            width: 100%;
+            padding: 10px;
+            border: none;
+            border-radius: 6px;
+            margin-bottom: 20px;
+            font-size: 1em;
+            text-align: center;
+            outline: none;
+        }
+
+        input:focus {
+            box-shadow: 0 0 5px #00aaff;
+        }
+
+        button {
+            width: 100%;
+            padding: 10px;
+            font-size: 1em;
+            font-weight: bold;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            color: #fff;
+            background-color: #0052cc;
+            transition: 0.2s;
+        }
+
+        button:hover {
+            background-color: #007bff;
+        }
+
+        .erro {
+            color: #ffdddd;
+            background-color: rgba(255, 0, 0, 0.2);
+            padding: 8px;
+            border-radius: 6px;
+            display: none;
+            margin-bottom: 15px;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="login-container">
+        <h1>Login do Sistema</h1>
+        <div class="erro" id="erroLogin">Usuário ou senha incorretos.</div>
+
+        <input type="text" id="usuario" placeholder="Usuário" autocomplete="off" />
+        <input type="password" id="senha" placeholder="Senha" />
+
+        <button id="btnLogin">Entrar</button>
+    </div>
+
+    <script>
+        const botao = document.getElementById('btnLogin');
+        const erro = document.getElementById('erroLogin');
+        const usuarioInput = document.getElementById('usuario');
+        const senhaInput = document.getElementById('senha');
+
+        // 🔹 Usuário e senha fixos
+        const USUARIO_CORRETO = "Admin";
+        const SENHA_CORRETA = "Admin123";
+
+        botao.addEventListener('click', () => {
+            const usuario = usuarioInput.value.trim();
+            const senha = senhaInput.value.trim();
+
+            if (usuario === USUARIO_CORRETO && senha === SENHA_CORRETA) {
+                localStorage.setItem('autenticado', 'true');
+                localStorage.setItem('usuario', usuario);
+                window.location.href = 'dashboard.html';
+            } else {
+                erro.style.display = 'block';
+                senhaInput.value = '';
+                senhaInput.focus();
+            }
+        });
+
+        // 🔹 Permite login com Enter
+        senhaInput.addEventListener('keydown', e => {
+            if (e.key === 'Enter') botao.click();
+        });
+    </script>
+</body>
+
+</html>

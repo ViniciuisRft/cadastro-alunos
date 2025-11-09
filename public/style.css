@@ -1,5 +1,319 @@
-body { font-family: Arial, sans-serif; }
-.card { box-shadow: 0 2px 4px rgba(0,0,0,0.05); }
-#mensagem { margin-top: 10px; }
-/* ensure focus is visible for accessibility */
-:focus { outline: 3px solid #66afe9; outline-offset: 2px; }
+/* ========== TEMA GLOBAL ========== */
+:root {
+  --cor-primaria: #0052cc;
+  --cor-secundaria: #e5f0ff;
+  --cor-fundo: #ffffff;
+  --texto-escuro: #222;
+  --texto-claro: #fff;
+  --borda: #ccc;
+  --foco: #ffcc00;
+}
+
+/* ======= MODO ESCURO ======= */
+@media (prefers-color-scheme: dark) {
+  :root {
+    --cor-fundo: #1e1e1e;
+    --texto-escuro: #eee;
+    --borda: #444;
+    --cor-secundaria: #0f1828;
+  }
+}
+
+/* ======= RESET ======= */
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+/* ======= BODY ======= */
+body {
+  font-family: "Segoe UI", Arial, sans-serif;
+  background-color: var(--cor-secundaria);
+  color: var(--texto-escuro);
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+/* ======= CABEÇALHO ======= */
+header {
+  background-color: var(--cor-primaria);
+  color: var(--texto-claro);
+  padding: 20px;
+  text-align: center;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15);
+}
+
+header h1 {
+  margin: 0;
+  font-size: 1.9em;
+}
+
+/* ======= NAVEGAÇÃO ======= */
+nav {
+  background-color: #f8f9fa;
+  display: flex;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: 25px;
+  padding: 12px;
+  border-bottom: 1px solid var(--borda);
+}
+
+nav a {
+  color: var(--cor-primaria);
+  text-decoration: none;
+  font-weight: bold;
+  font-size: 1em;
+  transition: all 0.2s ease-in-out;
+}
+
+nav a:hover,
+nav a:focus {
+  color: #003d99;
+  text-decoration: underline;
+  outline: 2px solid var(--foco);
+  border-radius: 4px;
+}
+
+/* ======= CONTEÚDO ======= */
+main {
+  flex: 1;
+  padding: 20px;
+  max-width: 1000px;
+  margin: 0 auto;
+  width: 95%;
+}
+
+/* ======= FORMULÁRIOS ======= */
+form {
+  background-color: var(--cor-fundo);
+  border: 1px solid var(--borda);
+  border-radius: 10px;
+  padding: 25px;
+  margin: 0 auto 30px;
+  max-width: 600px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+}
+
+label {
+  font-weight: bold;
+  font-size: 15px;
+}
+
+input,
+select,
+textarea {
+  width: 100%;
+  padding: 10px;
+  border: 1px solid var(--borda);
+  border-radius: 6px;
+  font-size: 15px;
+}
+
+input:focus,
+select:focus,
+textarea:focus {
+  outline: 3px solid var(--foco);
+}
+
+/* ======= BOTÕES ======= */
+button {
+  background-color: var(--cor-primaria);
+  color: var(--texto-claro);
+  border: none;
+  padding: 12px;
+  border-radius: 6px;
+  font-size: 16px;
+  cursor: pointer;
+  transition: all 0.2s ease-in-out;
+}
+
+button:hover,
+button:focus {
+  background-color: #003d99;
+  outline: 3px solid var(--foco);
+}
+
+.btn-editar {
+  background: #00b894;
+  padding: 6px 10px;
+  border-radius: 5px;
+  color: white;
+  font-size: 14px;
+  border: none;
+}
+
+.btn-excluir {
+  background: #d63031;
+  padding: 6px 10px;
+  border-radius: 5px;
+  color: white;
+  font-size: 14px;
+  border: none;
+  margin-left: 5px;
+}
+
+.btn-editar:hover,
+.btn-excluir:hover {
+  opacity: 0.85;
+}
+
+/* ======= TABELAS ======= */
+table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 25px;
+  background-color: var(--cor-fundo);
+  border-radius: 10px;
+  overflow: hidden;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+th,
+td {
+  padding: 12px;
+  text-align: center;
+  border-bottom: 1px solid var(--borda);
+}
+
+th {
+  background-color: var(--cor-primaria);
+  color: var(--texto-claro);
+  text-transform: uppercase;
+  font-size: 14px;
+}
+
+@media (prefers-color-scheme: dark) {
+  tr {
+    background-color: #111111c9 !important;
+    color: #ffffff;
+  }
+
+  tr:nth-child(even) {
+    background-color: #111111 !important;
+  }
+}
+
+/* ======= RODAPÉ ======= */
+footer {
+  background-color: var(--cor-primaria); /* mesmo azul do cabeçalho */
+  color: #fff; /* texto branco */
+  text-align: center;
+  padding: 12px 0;
+  font-weight: 500;
+  font-size: 1em;
+  border-top: 3px solid #004aad;
+  position: relative;
+  bottom: 0;
+  width: 100%;
+}
+
+/* ======= ACESSIBILIDADE ======= */
+:focus-visible {
+  outline: 3px solid var(--foco);
+  outline-offset: 3px;
+}
+
+/* ======= RESPONSIVIDADE ======= */
+@media (max-width: 700px) {
+  header h1 {
+    font-size: 1.5em;
+  }
+
+  nav {
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  table th, table td {
+    font-size: 13px;
+    padding: 8px;
+  }
+
+  form {
+    padding: 15px;
+  }
+}
+
+/* Botões de ação */
+.btn-editar, .btn-excluir {
+  background: none;
+  border: none;
+  font-size: 18px;
+  cursor: pointer;
+  transition: transform 0.2s;
+}
+
+.btn-editar:hover {
+  color: #007bff;
+  transform: scale(1.2);
+}
+
+.btn-excluir:hover {
+  color: #e74c3c;
+  transform: scale(1.2);
+}
+.btn-ver {
+  background: none;
+  border: none;
+  font-size: 18px;
+  cursor: pointer;
+  transition: transform 0.2s;
+}
+.btn-ver:hover {
+  color: #0099ff;
+  transform: scale(1.2);
+}
+
+/* ======= TÍTULOS DAS SEÇÕES ======= */
+section h2 {
+  text-align: center;
+  margin-bottom: 25px;
+  color: #fff;
+  font-size: 1.6em;
+  font-weight: bold;
+  background: linear-gradient(90deg, #0052cc, #007bff);
+  padding: 12px 0;
+  border-radius: 8px;
+  box-shadow: 0 3px 8px rgba(0, 0, 0, 0.2);
+  letter-spacing: 0.5px;
+}
+
+/* ======= TOPO DO DASHBOARD ======= */
+.topo-dashboard {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background-color: var(--cor-primaria);
+  color: white;
+  padding: 15px 25px;
+  border-bottom: 3px solid #004aad;
+}
+
+.topo-dashboard h1 {
+  margin: 0;
+  font-size: 1.8em;
+  font-weight: bold;
+}
+
+/* ======= BOTÃO SAIR ======= */
+.botao-sair {
+  background-color: #d63031;
+  border: none;
+  color: white;
+  font-size: 1em;
+  font-weight: bold;
+  padding: 8px 16px;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: background 0.2s ease;
+}
+
+.botao-sair:hover {
+  background-color: #ff4d4d;
+}

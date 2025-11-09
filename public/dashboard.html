@@ -1,0 +1,500 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Sistema de Alunos</title>
+
+  <link rel="stylesheet" href="./style.css">
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+  <script src="./script.js" defer></script>
+
+  <style>
+    :root {
+      --cor-primaria: #0052cc;
+      --cor-secundaria: #f5f9ff;
+      --texto-claro: #fff;
+      --texto-escuro: #222;
+    }
+
+    body {
+      font-family: "Arial", sans-serif;
+      background: var(--cor-secundaria);
+      color: var(--texto-escuro);
+      margin: 0;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+
+    header {
+      background: var(--cor-primaria);
+      color: var(--texto-claro);
+      text-align: center;
+      padding: 15px;
+    }
+
+    nav {
+      display: flex;
+      justify-content: center;
+      background: #eaf0ff;
+      gap: 10px;
+      padding: 10px;
+    }
+
+    nav button {
+      background: none;
+      border: 2px solid var(--cor-primaria);
+      color: var(--cor-primaria);
+      padding: 8px 14px;
+      border-radius: 6px;
+      cursor: pointer;
+      font-weight: bold;
+    }
+
+    nav button.ativo {
+      background: var(--cor-primaria);
+      color: var(--texto-claro);
+    }
+
+    main {
+      flex-grow: 1;
+      padding: 20px;
+      max-width: 900px;
+      margin: auto;
+    }
+
+    form {
+      background: #fff;
+      padding: 20px;
+      border-radius: 10px;
+      box-shadow: 0 3px 8px rgba(0, 0, 0, 0.1);
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      max-width: 500px;
+      margin: auto;
+    }
+
+    label {
+      font-weight: bold;
+    }
+
+    input {
+      padding: 10px;
+      border: 1px solid #ccc;
+      border-radius: 6px;
+      font-size: 15px;
+    }
+
+    input:focus {
+      outline: 3px solid #ffcc00;
+    }
+
+    button {
+      background-color: var(--cor-primaria);
+      color: var(--texto-claro);
+      border: none;
+      padding: 12px;
+      border-radius: 6px;
+      cursor: pointer;
+      font-size: 16px;
+    }
+
+    button:hover,
+    button:focus {
+      background-color: #003d99;
+      outline: 3px solid #ffcc00;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      background: white;
+      border-radius: 10px;
+      overflow: hidden;
+      margin-top: 20px;
+    }
+
+    th,
+    td {
+      padding: 12px;
+      text-align: center;
+      border-bottom: 1px solid #ddd;
+    }
+
+    th {
+      background-color: var(--cor-primaria);
+      color: var(--texto-claro);
+    }
+
+    tr:nth-child(even) {
+      background: #f9f9f9;
+    }
+
+    canvas {
+      display: block;
+      margin: 30px auto;
+      max-width: 600px;
+    }
+
+    @media (prefers-color-scheme: dark) {
+      body {
+        background: #121212;
+        color: #eee;
+      }
+
+      form,
+      table {
+        background: #1e1e1e;
+        color: #ddd;
+      }
+
+      th {
+        background-color: #2a7dfc;
+      }
+
+      nav {
+        background: #1c1c1c;
+      }
+    }
+  </style>
+</head>
+<script>
+  if (localStorage.getItem('autenticado') !== 'true') {
+    window.location.href = 'login.html';
+  }
+</script>
+
+<body>
+  <header class="topo-dashboard">
+    <h1>Sistema de Alunos</h1>
+    <button id="btnSair" class="botao-sair">Sair</button>
+  </header>
+
+  <div id="usuarioLogado" style="float:right; margin-right:20px; font-weight:bold; color:white;"></div>
+
+  <script>
+    const usuario = localStorage.getItem('usuario');
+    if (usuario) {
+      document.getElementById('usuarioLogado').innerText = `👤 Usuário: ${usuario}`;
+    }
+  </script>
+
+  <nav role="navigation">
+    <button id="abaCadastro" class="ativo" aria-controls="secCadastro">Cadastro</button>
+    <button id="abaRelatorio" aria-controls="secRelatorio">Relatórios</button>
+    <button id="abaPresencas" aria-controls="secPresencas">Presenças</button>
+  </nav>
+
+  <main>
+    <!-- Seção de Cadastro -->
+    <section id="secCadastro" role="region">
+      <h2>Cadastro de Alunos</h2>
+      <form id="formCadastro" aria-label="Formulário de cadastro de alunos">
+        <label for="nome">Nome:</label>
+        <input id="nome" name="nome" required>
+
+        <label for="data_nascimento">Data de Nascimento:</label>
+        <input id="data_nascimento" name="data_nascimento" type="date" required>
+
+        <label for="turma">Turma:</label>
+        <input id="turma" name="turma" required>
+
+        <label for="situacao">Situação:</label>
+        <select id="situacao" name="situacao" required>
+          <option value="Ativo" selected>Ativo</option>
+          <option value="Transferido">Transferido</option>
+        </select>
+
+        <label for="telefone">Telefone:</label>
+        <input id="telefone" name="telefone" type="tel" placeholder="(11) 91234-5678"
+          pattern="\(\d{2}\)\s?\d{4,5}-\d{4}" required>
+
+        <label for="email">E-mail:</label>
+        <input id="email" name="email" type="email" required>
+
+        <fieldset style="border:1px solid #ddd; padding:10px; border-radius:6px;">
+          <legend>Endereço</legend>
+
+          <label for="cep">CEP:</label>
+          <div style="display:flex; gap:8px;">
+            <input id="cep" name="cep" placeholder="00000-000" style="flex:1" />
+            <button id="btnBuscarCep" type="button">Buscar CEP</button>
+          </div>
+
+          <label for="rua">Rua / Logradouro:</label>
+          <input id="rua" name="rua" />
+
+          <label for="numero">Número:</label>
+          <input id="numero" name="numero" />
+
+          <label for="complemento">Complemento:</label>
+          <input id="complemento" name="complemento" />
+
+          <label for="bairro">Bairro:</label>
+          <input id="bairro" name="bairro" />
+
+          <label for="cidade">Cidade:</label>
+          <input id="cidade" name="cidade" />
+
+          <label for="estado">Estado:</label>
+          <input id="estado" name="estado" />
+        </fieldset>
+
+        <button type="submit">Cadastrar</button>
+      </form>
+
+    </section>
+
+    <!-- Seção de Relatório -->
+    <section id="secRelatorio" role="region" hidden>
+      <h2>Relatório de Alunos</h2>
+      <div id="filtrosRelatorio" style="display: flex; gap: 10px; margin-bottom: 15px; flex-wrap: wrap;">
+        <select id="filtroTurma" style="padding: 8px; border-radius: 6px; border: 1px solid #ccc;">
+          <option value="">Todas as Turmas</option>
+        </select>
+        <input id="pesquisaAluno" type="text" placeholder="🔍 Pesquisar aluno..."
+          style="flex: 1; padding: 8px; border-radius: 6px; border: 1px solid #ccc;" />
+      </div>
+      <canvas id="graficoAlunos"></canvas>
+      <p id="mensagemSemDados" style="text-align:center; color:#555; font-weight:bold; display:none;">
+        Nenhum aluno cadastrado para gerar gráfico.
+      </p>
+      <table id="tabelaAlunos">
+        <thead>
+          <tr>
+            <th>Nome</th>
+            <th>Data de Nascimento</th>
+            <th>Idade Atual</th>
+            <th>Telefone</th>
+            <th>E-mail</th>
+            <th>Endereço</th>
+            <th>Situação</th>
+            <th>Ações</th>
+          </tr>
+        </thead>
+        <tbody></tbody>
+      </table>
+      <p id="contadorAlunos" style="text-align:right; font-weight:bold; margin-top:10px;">
+        Total de alunos: 0
+      </p>
+      <button id="btnPDF">📄 Baixar Relatório em PDF</button>
+    </section>
+
+    <!-- Seção de Presenças -->
+    <section id="secPresencas" role="region" hidden>
+      <h2>Registro de Presenças</h2>
+      <div style="display: flex; gap: 10px; margin-bottom: 15px; flex-wrap: wrap;">
+        <select id="modoPresenca" style="padding:8px; border-radius:6px; border:1px solid #ccc;">
+          <option value="registrar" selected>🟩 Marcar Presenças</option>
+          <option value="visualizar">📄 Ver Presenças Salvas</option>
+        </select>
+
+        <select id="turmaPresenca" style="padding:8px; border-radius:6px; border:1px solid #ccc;">
+          <option value="">Selecione uma turma</option>
+        </select>
+
+        <input id="dataPresenca" type="date" style="padding:8px; border-radius:6px; border:1px solid #ccc;" />
+
+        <button id="btnSalvarPresenca">💾 Salvar Presenças</button>
+        <button id="btnExcluirPresenca" style="display:none; background:#d63031;">🗑️ Excluir Presenças</button>
+      </div>
+
+      <table id="tabelaPresencas">
+        <thead>
+          <tr>
+            <th>Presente</th>
+            <th>Nome</th>
+            <th>Data de Nascimento</th>
+            <th>Situação</th>
+          </tr>
+        </thead>
+        <tbody></tbody>
+      </table>
+    </section>
+  </main>
+
+  <!-- Modal de Endereço Completo -->
+  <div id="modalEndereco" style="
+  display:none;
+  position:fixed;
+  top:0; left:0; right:0; bottom:0;
+  background:rgba(0,0,0,0.6);
+  justify-content:center;
+  align-items:center;
+  z-index:1000;">
+    <div style="
+    background:white;
+    padding:20px;
+    border-radius:10px;
+    max-width:400px;
+    width:90%;
+    color:#000;
+    text-align:left;
+    box-shadow:0 4px 12px rgba(0,0,0,0.3);">
+      <h3 style="margin-top:0;">Endereço Completo</h3>
+      <p id="conteudoEndereco" style="white-space:pre-line; line-height:1.5;"></p>
+      <button id="btnFecharModal" style="
+      margin-top:10px;
+      background:#0052cc;
+      color:white;
+      border:none;
+      padding:8px 14px;
+      border-radius:6px;
+      cursor:pointer;">Fechar</button>
+    </div>
+  </div>
+
+  <footer>
+    Projeto Integrador UNIVESP © 2025
+  </footer>
+
+  <script>
+    const secCadastro = document.getElementById("secCadastro");
+    const secRelatorio = document.getElementById("secRelatorio");
+    const secPresencas = document.getElementById("secPresencas");
+    const abaCadastro = document.getElementById("abaCadastro");
+    const abaRelatorio = document.getElementById("abaRelatorio");
+    const abaPresencas = document.getElementById("abaPresencas");
+
+    let chartInstance = null;
+
+    // Alternar entre abas
+    abaCadastro.addEventListener("click", () => {
+      secCadastro.hidden = false;
+      secRelatorio.hidden = true;
+      secPresencas.hidden = true;
+      abaCadastro.classList.add("ativo");
+      abaRelatorio.classList.remove("ativo");
+      abaPresencas.classList.remove("ativo");
+      if (window.carregarAlunos) window.carregarAlunos();
+    });
+
+    abaRelatorio.addEventListener("click", async () => {
+      secCadastro.hidden = true;
+      secRelatorio.hidden = false;
+      secPresencas.hidden = true;
+      abaRelatorio.classList.add("ativo");
+      abaCadastro.classList.remove("ativo");
+      abaPresencas.classList.remove("ativo");
+
+      if (window.carregarAlunos) await window.carregarAlunos();
+      gerarGrafico();
+    });
+
+    abaPresencas.addEventListener("click", async () => {
+      secCadastro.hidden = true;
+      secRelatorio.hidden = true;
+      secPresencas.hidden = false;
+      abaCadastro.classList.remove("ativo");
+      abaRelatorio.classList.remove("ativo");
+      abaPresencas.classList.add("ativo");
+      if (window.carregarPresencas) await window.carregarPresencas();
+    });
+
+    // Gera/atualiza gráfico de alunos por turma (usa Chart.js)
+    async function gerarGrafico() {
+      try {
+        const resp = await fetch('/alunos');
+        const alunos = await resp.json();
+
+        const canvas = document.getElementById('graficoAlunos');
+        const msg = document.getElementById('mensagemSemDados');
+        const ctx = canvas.getContext('2d');
+
+        // 🔹 Se não houver alunos, mostra a mensagem e esconde o gráfico
+        if (!alunos.length) {
+          canvas.style.display = 'none';
+          msg.style.display = 'block';
+          if (chartInstance) {
+            chartInstance.destroy();
+            chartInstance = null;
+          }
+          return;
+        } else {
+          canvas.style.display = 'block';
+          msg.style.display = 'none';
+        }
+
+        // 🔹 Conta alunos por turma
+        const porTurma = {};
+        alunos.forEach(a => {
+          const t = a.turma || 'Sem Turma';
+          porTurma[t] = (porTurma[t] || 0) + 1;
+        });
+
+        const labels = Object.keys(porTurma);
+        const data = Object.values(porTurma);
+
+        // Destroi gráfico anterior (evita sobreposição)
+        if (chartInstance) {
+          chartInstance.destroy();
+          chartInstance = null;
+        }
+
+        // Cria novo gráfico
+        chartInstance = new Chart(ctx, {
+          type: "bar",
+          data: {
+            labels,
+            datasets: [{
+              label: "Alunos por Turma",
+              data,
+              borderWidth: 1,
+              backgroundColor: "rgba(0, 82, 204, 0.8)",
+              borderColor: "#003d99",
+              hoverBackgroundColor: "rgba(0, 82, 204, 1)"
+            }]
+          },
+          options: {
+            responsive: true,
+            plugins: {
+              legend: { display: false },
+              title: {
+                display: true,
+                text: 'Distribuição de Alunos por Turma',
+                font: { size: 16, weight: 'bold' },
+                padding: { bottom: 25 }
+              },
+              tooltip: { enabled: true },
+              datalabels: {
+                color: '#fff',
+                anchor: 'end',
+                align: 'top',
+                offset: 6,
+                font: { weight: 'bold', size: 13 },
+                formatter: (value) => `${value}`
+              }
+            },
+            layout: { padding: { top: 20, bottom: 10 } },
+            scales: {
+              y: { beginAtZero: true, ticks: { stepSize: 1 } },
+              x: { ticks: { font: { weight: 'bold' } } }
+            }
+          },
+          plugins: [ChartDataLabels]
+        });
+      } catch (err) {
+        console.error('Erro ao gerar gráfico:', err);
+      }
+    }
+    abaRelatorio.click();
+
+  const btnSair = document.getElementById('btnSair');
+  if (btnSair) {
+    btnSair.addEventListener('click', () => {
+      if (confirm("Deseja realmente sair do sistema?")) {
+        localStorage.removeItem('autenticado');
+        localStorage.removeItem('usuario');
+        window.location.href = 'login.html';
+      }
+    });
+  }
+  </script>
+</body>
+
+</html>
