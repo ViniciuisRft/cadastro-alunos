@@ -1,32 +1,29 @@
 {
   "name": "cadastro-alunos",
   "version": "2.0.0",
-  "description": "Sistema de Cadastro de Alunos - Projeto Integrador UNIVESP",
+  "description": "Sistema de cadastro de alunos com presenças e relatórios - Projeto Integrador UNIVESP",
+  "engines": {
+    "node": "18.x"
+  },
   "main": "server.js",
+  "type": "commonjs",
   "scripts": {
-    "start": "node server.js",
-    "dev": "nodemon server.js"
+    "start": "node server.js"
+  },
+  "dependencies": {
+    "express": "^4.19.2",
+    "better-sqlite3": "^9.4.0"
   },
   "keywords": [
+    "univesp",
     "cadastro",
     "alunos",
+    "presenças",
+    "relatórios",
+    "nodejs",
     "express",
-    "sqlite",
-    "projeto-integrador",
-    "univesp"
+    "sqlite"
   ],
-  "author": "Equipe Projeto Integrador - UNIVESP",
-  "license": "MIT",
-  "dependencies": {
-    "better-sqlite3": "^9.6.0",
-    "body-parser": "^1.20.3",
-    "cors": "^2.8.5",
-    "express": "^4.21.2"
-  },
-  "devDependencies": {
-    "nodemon": "^3.1.10"
-  },
-  "engines": {
-    "node": ">=18"
-  }
+  "author": "Vinicius Pires",
+  "license": "MIT"
 }
