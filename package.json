@@ -1,9 +1,9 @@
 {
   "name": "cadastro-alunos",
-  "version": "2.0.0",
+  "version": "1.0.0",
   "description": "Sistema de cadastro de alunos com presenças e relatórios - Projeto Integrador UNIVESP",
   "engines": {
-    "node": "18.x"
+    "node": "20.x"
   },
   "main": "server.js",
   "type": "commonjs",
@@ -12,7 +12,8 @@
   },
   "dependencies": {
     "express": "^4.19.2",
-    "better-sqlite3": "^9.4.0"
+    "better-sqlite3": "^9.4.0",
+    "cors": "^2.8.5"
   },
   "keywords": [
     "univesp",
